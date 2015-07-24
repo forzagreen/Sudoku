@@ -1,5 +1,6 @@
 
-
+// Take inspiration from here: 
+// http://www.sudoku-solutions.com/
 //Soduku samples:
 // taken from : http://www.puzzles.ca/sudoku_puzzles/sudoku_easy_123.html
 // and solution from : http://www.puzzles.ca/sudoku_puzzles/sudoku_easy_123_solution.html
@@ -74,13 +75,15 @@ for(var j=0; j<9; j++) { //run through the 9 columns: j is the column number
 for (var i = 0; i<9 ; i+=3) {
 	for (var j = 0; j<9 ; j+=3) { // i and j define a zone
 		var valuesInZone = [];
-		for (var k=i; k<=i+3; k++) {
-			for (var n=i; n<=i+3; n++) {
+		for (var k=i; k<i+3; k++) {
+			for (var n=j; n<j+3; n++) {
 				if(valuesInZone.indexOf(tab123_new[k][n].v) == -1) { //if does not exist, then push
 					valuesInZone.push(tab123_new[k][n].v);
 				}
 			}
 		}
+		console.log("zone: " + i + " ; " + j);
+		console.log(valuesInZone);
 		//TODO: remove proposed values
 	};
 };
