@@ -1,0 +1,19 @@
+.main-card{
+    margin-top: 20px;
+    margin-bottom: 20px;
+    width: 90%;
+    left: 50%;
+    -ms-transform: translate(-50%);
+    transform: translate(-50%);
+    height: auto;
+}
+
+.case{
+    width: 2em;
+    height: 2em;
+    text-align: center;
+    font-size: 2em;
+    font-family: 'Pacifico';
+    border: 3px solid black;
+    margin: 0;
+}
