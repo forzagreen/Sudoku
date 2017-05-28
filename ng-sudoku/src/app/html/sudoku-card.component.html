@@ -1,0 +1,7 @@
+<md-card class="main-card">
+    <div class="sudoku-grid">
+        <div *ngFor="let array of grid, let indexy = index;trackBy:trackByIndex;">
+            <input *ngFor="let digit of array, let index = index;trackBy:trackByIndex;" class="case" maxlength="1" type="text" [(ngModel)]="array[index]" [ngClass]="{'thick-border-right': (index+1)%3===0, 'thick-border-left': index===0, 'thick-border-top': indexy==0, 'thick-border-bottom': (indexy+1)%3===0}" >
+        </div>
+    </div>
+</md-card>
