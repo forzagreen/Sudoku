@@ -17,4 +17,8 @@ export class SudokuCard implements OnInit {
     constructor() { }
 
     ngOnInit() { }
+
+    trackByIndex(index: number, obj: any): any {
+        return index;
+  }
 }
