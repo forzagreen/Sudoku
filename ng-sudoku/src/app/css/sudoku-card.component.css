@@ -17,3 +17,24 @@
     border: 1px solid black;
     margin: 0;
 }
+
+.sudoku-grid{
+    margin-top: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+.thick-border-right{
+    border-right: 4px solid black;
+}
+
+.thick-border-left{
+    border-left: 4px solid black;
+}
+
+.thick-border-top{
+    border-top: 4px solid black;
+}
+
+.thick-border-bottom{
+    border-bottom: 4px solid black;
+}
