@@ -9,8 +9,10 @@
 }
 
 .case{
-    width: 2em;
-    height: 2em;
+    width: 8.5%;
+    max-width: 1.8em;
+    height: 6%;
+    max-height: 2em;
     text-align: center;
     font-size: 2em;
     font-family: 'Pacifico';
