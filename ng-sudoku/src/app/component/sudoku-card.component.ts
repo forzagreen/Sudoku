@@ -11,21 +11,23 @@ export class SudokuCard implements OnInit {
     dimension: number = 3;
     //debuggingPurposes
     grid: Array<Array<number>> = [
-        [, 2, , 6, , 8, , , ,],
-        [5, 8, , , , 9, 7, , ,],
-        [3, 7, , , , , 5, , ,],
-        [, , , , 4, , , , ,],
-        [6, , , , , , , , 4,],
-        [, , 8, , , , , 1, 3,],
-        [, , , , 2, , , , ,],
-        [, , 9, 8, , , , 3, 6,],
-        [, , , 3, , 6, , 9, ,]];
+        [, 6, 2, 5, , , , 9, ,],
+        [1, , , ,2, 9, , , ,],
+        [, 5, 9, , , 8, 6, , 2,],
+        [, 4, 7, 1, 9, , 3, , ,],
+        [9, , 6, 3, , 2, 1, , ,],
+        [, , 1, , 8, 7, 9, 2, ,],
+        [6, , 4, 8, , , 5, 1, ,],
+        [, , , 9, 4, , , , 7,],
+        [, 9, , , , 1, 4, 8, ,]];
 
     gridObj: Array<Array<any>>;
 
     constructor() { }
 
-    ngOnInit() { }
+    ngOnInit() {
+        this.initialize();
+     }
 
     trackByIndex(index: number, obj: any): any {
         return index;
@@ -37,7 +39,7 @@ export class SudokuCard implements OnInit {
         if (value < 49 || value > 58) {
             this.grid[indexy][index] = undefined;
         }
-        this.initialize();
+        
     }
 
     initialize() {
@@ -55,8 +57,6 @@ export class SudokuCard implements OnInit {
                 }
                 return lineArray;
             });
-        // this.updateAllowedValues();
-        console.log(this.gridObj);
     }
 
     updateAllowedValues() {
@@ -71,10 +71,8 @@ export class SudokuCard implements OnInit {
     }
 
     updateAllowedValuesForCell(i, j) {
-
         let needUpdates: Array<Array<number>>=[];
         //clean the line
-        console.log("clean the line)");
         for (let m = 0; m < 9; m++) {
             if (!this.gridObj[i][m].value) {
                 if (this.gridObj[i][m].allowedValues[this.gridObj[i][j].value]) {
@@ -83,13 +81,11 @@ export class SudokuCard implements OnInit {
                     if (this.gridObj[i][m].numberAllowedValues == 1) {
                         //if we numberAllowedValues is on, means we found the value! 
                         needUpdates.push([i, m]);
-                        console.log("pushed "+i+" and "+m);
                     }
                 }
             }
         }
         //clean the column
-        console.log("about to clean the column");
         for (let m = 0; m < 9; m++) {
             if (!this.gridObj[m][j].value) {
                 if (this.gridObj[m][j].allowedValues[this.gridObj[i][j].value]) {
@@ -97,12 +93,10 @@ export class SudokuCard implements OnInit {
                     this.gridObj[m][j].numberAllowedValues--;
                     if (this.gridObj[m][j].numberAllowedValues == 1) {
                         needUpdates.push([m, j]);
-                        console.log("pushed "+m+" and "+j);
                     }
                 }
             }
         }
-        console.log("about to cleant the 3*3Grid");
         //clean the 3*3 grid
         let modi = Math.floor(i / 3);
         let modj = Math.floor(j / 3);
@@ -117,23 +111,20 @@ export class SudokuCard implements OnInit {
                         this.gridObj[indexy1][indexy2].numberAllowedValues--;
                         if (this.gridObj[indexy1][indexy2].numberAllowedValues == 1) {
                             needUpdates.push([indexy1, indexy2]);
-                        console.log("pushed "+indexy1+" and "+indexy2);
                         }
                     }
                 }
             }
         }
         // needUpdates=undefined;
-        if(needUpdates){
+        if(needUpdates.length>0){
             needUpdates.map(couple => {
-                console.log(couple);
             let l = couple[0];
             let m = couple[1];
             this.gridObj[l][m].numberAllowedValues = 0;
             for (let p = 1; p < 10; p++) {
                 if (this.gridObj[l][m].allowedValues[p]) {
                     this.gridObj[l][m].value = p;
-                    console.log(p+" is our guy")
                     break;
                 }
             }
