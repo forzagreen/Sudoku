@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import {MdDialog} from '@angular/material';
 
+import {CameraDialog} from './camera-dialog.component';
 @Component({
     moduleId: module.id,
     selector: 'sudoku-card',
@@ -23,12 +25,15 @@ export class SudokuCard implements OnInit {
 
     gridObj: Array<Array<any>>;
 
-    constructor() { }
+    constructor(public dialog: MdDialog) { }
 
     ngOnInit() {
         this.initialize();
      }
+     openCameraDialog(){
+        this.dialog.open(CameraDialog);
 
+     }
     trackByIndex(index: number, obj: any): any {
         return index;
     }
@@ -136,3 +141,4 @@ export class SudokuCard implements OnInit {
 
     }
 }
+

@@ -22,6 +22,7 @@ import {CameraDialog} from './component/camera-dialog.component';
     HttpModule,
     MaterialModule
   ],
+  entryComponents: [CameraDialog],
   providers: [],
   bootstrap: [AppComponent]
 })

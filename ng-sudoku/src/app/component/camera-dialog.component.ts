@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import {MdDialog} from '@angular/material';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
     moduleId: module.id,
@@ -7,7 +6,10 @@ import {MdDialog} from '@angular/material';
     templateUrl: '../html/camera-dialog.component.html'
 })
 
-export class CameraDialog {
+export class CameraDialog implements OnInit {
     constructor() { }
-
+    ngOnInit() {
+        
+    }
 }
+
