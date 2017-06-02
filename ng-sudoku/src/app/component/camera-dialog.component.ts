@@ -4,7 +4,7 @@ import {MdDialog} from '@angular/material';
 @Component({
     moduleId: module.id,
     selector: 'camera-dialog',
-    templateUrl: 'camera-dialog.component.html'
+    templateUrl: '../html/camera-dialog.component.html'
 })
 
 export class CameraDialog {
