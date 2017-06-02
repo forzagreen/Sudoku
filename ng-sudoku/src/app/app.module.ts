@@ -7,11 +7,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './component/app.component';
 import { SudokuCard } from './component/sudoku-card.component';
+import {CameraDialog} from './component/camera-dialog.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    SudokuCard
+    SudokuCard,
+    CameraDialog
   ],
   imports: [
     BrowserModule,
