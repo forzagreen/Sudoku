@@ -13,7 +13,7 @@ export class SudokuCard implements OnInit {
     dimension: number = 3;
     //debuggingPurposes
     grid: Array<Array<number>> = [
-        [, 6, 2, 5, , , , 9, ,],
+        [, , , , , , , 9, ,],
         [1, , , ,2, 9, , , ,],
         [, 5, 9, , , 8, 6, , 2,],
         [, 4, 7, 1, 9, , 3, , ,],
@@ -29,35 +29,36 @@ export class SudokuCard implements OnInit {
 
     ngOnInit() {
         this.initialize();
-     }
-     openCameraDialog(){
-        this.dialog.open(CameraDialog);
+    }
 
-     }
+    openCameraDialog(){
+        this.dialog.open(CameraDialog);
+    }
+
     trackByIndex(index: number, obj: any): any {
         return index;
     }
+
     onKey(event: any, indexy: number, index: number) {
         // Get ASCII code of character
         let value = event.key.charCodeAt(0);
         // verify if input is whithin 1-9
         if (value < 49 || value > 58) {
             this.grid[indexy][index] = undefined;
-        }
-        
+        }        
     }
 
     initialize() {
-        //Initialize GridObject 
+        //Initialize GridObject
+        console.log("Loading grid to gridObj");
         this.gridObj = this.grid.map(
             line => {
                 let lineArray = [];
                 for (let i = 0; i < 9; i++) {
                     lineArray[i] = {
                         value: line[i],
-                        allowedValues: (line[i] ? undefined : [, 1, 1, 1, 1, 1, 1, 1, 1, 1]),
-                        numberAllowedValues: (line[i] ? 0 : 9)
-                        //1 means that the i'th element is allowed 
+                        allowedValues: (line[i] ? undefined : new Set([1,2,3,4,5,6,7,8,9])),
+                        numberAllowedValues: function() {return this.allowedValues.size;}
                     }
                 }
                 return lineArray;
@@ -65,6 +66,7 @@ export class SudokuCard implements OnInit {
     }
 
     updateAllowedValues() {
+        console.log("Clicked Solve");
 
         for (let i = 0; i < 9; i++) {
             for (let j = 0; j < 9; j++) {
@@ -77,31 +79,32 @@ export class SudokuCard implements OnInit {
 
     updateAllowedValuesForCell(i, j) {
         let needUpdates: Array<Array<number>>=[];
+        
         //clean the line
         for (let m = 0; m < 9; m++) {
             if (!this.gridObj[i][m].value) {
-                if (this.gridObj[i][m].allowedValues[this.gridObj[i][j].value]) {
-                    this.gridObj[i][m].allowedValues[this.gridObj[i][j].value] = 0;
-                    this.gridObj[i][m].numberAllowedValues--;
-                    if (this.gridObj[i][m].numberAllowedValues == 1) {
-                        //if we numberAllowedValues is on, means we found the value! 
+                if (this.gridObj[i][m].allowedValues.has(this.gridObj[i][j].value)) {
+                    this.gridObj[i][m].allowedValues.delete(this.gridObj[i][j].value);
+                    if (this.gridObj[i][m].numberAllowedValues() == 1) {
                         needUpdates.push([i, m]);
                     }
                 }
+
             }
         }
+
         //clean the column
         for (let m = 0; m < 9; m++) {
             if (!this.gridObj[m][j].value) {
-                if (this.gridObj[m][j].allowedValues[this.gridObj[i][j].value]) {
-                    this.gridObj[m][j].allowedValues[this.gridObj[i][j].value] = 0;
-                    this.gridObj[m][j].numberAllowedValues--;
-                    if (this.gridObj[m][j].numberAllowedValues == 1) {
+                if (this.gridObj[m][j].allowedValues.has(this.gridObj[i][j].value)) {
+                    this.gridObj[m][j].allowedValues.delete(this.gridObj[i][j].value);
+                    if (this.gridObj[m][j].numberAllowedValues() == 1) {
                         needUpdates.push([m, j]);
                     }
                 }
             }
         }
+
         //clean the 3*3 grid
         let modi = Math.floor(i / 3);
         let modj = Math.floor(j / 3);
@@ -111,32 +114,31 @@ export class SudokuCard implements OnInit {
                 let indexy1 = 3 * modi + ((i + k + 3) % 3);
                 let indexy2 = 3 * modj + ((j + l + 3) % 3);
                 if (!this.gridObj[indexy1][indexy2].value) {
-                    if (this.gridObj[indexy1][indexy2].allowedValues[this.gridObj[i][j].value]) {
-                        this.gridObj[indexy1][indexy2].allowedValues[this.gridObj[i][j].value] = 0;
-                        this.gridObj[indexy1][indexy2].numberAllowedValues--;
-                        if (this.gridObj[indexy1][indexy2].numberAllowedValues == 1) {
+                    if (this.gridObj[indexy1][indexy2].allowedValues.has(this.gridObj[i][j].value)) {
+                        this.gridObj[indexy1][indexy2].allowedValues.delete(this.gridObj[i][j].value);
+                        if (this.gridObj[indexy1][indexy2].numberAllowedValues() == 1) {
                             needUpdates.push([indexy1, indexy2]);
                         }
                     }
                 }
             }
         }
+
         // needUpdates=undefined;
         if(needUpdates.length>0){
             needUpdates.map(couple => {
-            let l = couple[0];
-            let m = couple[1];
-            this.gridObj[l][m].numberAllowedValues = 0;
-            for (let p = 1; p < 10; p++) {
-                if (this.gridObj[l][m].allowedValues[p]) {
-                    this.gridObj[l][m].value = p;
-                    break;
-                }
-            }
-            this.gridObj[l][m].allowedValues = undefined;
-            this.grid[l][m]=this.gridObj[l][m].value;
-            this.updateAllowedValuesForCell(l, m);
-        });
+                let l = couple[0];
+                let m = couple[1];
+
+                // There is one value in the allowedValues set
+                this.gridObj[l][m].value = Array.from(this.gridObj[l][m].allowedValues)[0];
+
+                // Display effect ;)
+                setTimeout(() => {
+                    this.grid[l][m]=this.gridObj[l][m].value;
+                    this.updateAllowedValuesForCell(l, m);
+                }, 100);
+            });
         }
 
     }
