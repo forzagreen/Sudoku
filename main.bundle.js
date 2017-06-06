@@ -26,7 +26,7 @@ exports = module.exports = __webpack_require__(22)(false);
 
 
 // module
-exports.push([module.i, ".main-card{\n    position:absolute;\n    margin-top: 20px;\n    margin-bottom: 20px;\n    margin-right: 5px;\n    width: 80%;\n    left: 50%;\n    -webkit-transform: translate(-50%);\n            transform: translate(-50%);\n    height: 80%;\n}\n\n.case{\n    width: 8.5%;\n    max-width: 1.8em;\n    max-height: 5%;\n    /*max-height: 2em;*/\n    text-align: center;\n    font-size: 1.5em;\n    font-family: 'Pacifico';\n    border: 1px solid black;\n    margin: 0;\n}\n\n.sudoku-grid{\n    position: absolute;\n    margin-top: 20px;\n    margin-bottom: 20px;\n    text-align: center;\n    width: 90%;\n    height: 80%;\n    z-index: -1;\n}\n.buttons{\n    width: 56px;\n    float:right;\n}\n\n.thick-border-right{\n    border-right: 4px solid black;\n}\n\n.thick-border-left{\n    border-left: 4px solid black;\n}\n\n.thick-border-top{\n    border-top: 4px solid black;\n}\n\n.thick-border-bottom{\n    border-bottom: 4px solid black;\n}\n", ""]);
+exports.push([module.i, ".main-card{\n    position:absolute;\n    margin-top: 20px;\n    margin-bottom: 20px;\n    margin-right: 5px;\n    width: 80%;\n    left: 50%;\n    -webkit-transform: translate(-50%);\n            transform: translate(-50%);\n    height: 80%;\n}\n\n.case{\n    width: 8.5%;\n    max-width: 1.8em;\n    max-height: 5%;\n    /*max-height: 2em;*/\n    text-align: center;\n    font-size: 1.5em;\n    font-family: 'Pacifico';\n    border: 1px solid black;\n    margin: 0;\n}\n\n.sudoku-grid{\n    position: absolute;\n    margin-top: 20px;\n    margin-bottom: 20px;\n    text-align: center;\n    width: 90%;\n    height: 80%;\n    z-index: -1;\n}\n.buttons{\n    width: 56px;\n    float:right;\n}\n\n.thick-border-right{\n    border-right: 4px solid black;\n}\n\n.thick-border-left{\n    border-left: 4px solid black;\n}\n\n.thick-border-top{\n    border-top: 4px solid black;\n}\n\n.thick-border-bottom{\n    border-bottom: 4px solid black;\n}\n\ninput.empty-cell {\n    color: green;\n    background: white;\n}\n", ""]);
 
 // exports
 
@@ -53,7 +53,7 @@ module.exports = "<h2 md-dialog-title>Camera Dialog</h2>\n<md-dialog-content>We'
 /***/ 153:
 /***/ (function(module, exports) {
 
-module.exports = "<md-card class=\"main-card\">\n    <div class=\"buttons\">\n    <button md-fab primary style=\"margin:2px\" (click)=\"updateAllowedValues()\">Solve</button>\n    <button md-fab primary style=\"margin:2px\" (click)=\"openCameraDialog()\">\n        <md-icon>photo_camera</md-icon>\n    </button>\n  </div>\n  <br>\n    <div class=\"sudoku-grid\">\n        <div *ngFor=\"let array of grid, let indexy = index;trackBy:trackByIndex;\">\n            <input *ngFor=\"let digit of array, let index = index;trackBy:trackByIndex;\" \n                    class=\"case\" maxlength=\"1\" type=\"text\" \n                    [(ngModel)]=\"array[index]\" \n                    [ngClass]=\"{'thick-border-right': (index+1)%3===0, 'thick-border-left': index===0, 'thick-border-top': indexy==0, 'thick-border-bottom': (indexy+1)%3===0}\" \n                    (keyup)=\"onKey($event,indexy,index)\" disabled>\n        </div>\n    </div>\n</md-card>"
+module.exports = "<md-card class=\"main-card\">\n    <div class=\"buttons\">\n    <button md-fab primary style=\"margin:2px\" (click)=\"updateAllowedValues()\">Solve</button>\n    <button md-fab primary style=\"margin:2px\" (click)=\"openCameraDialog()\">\n        <md-icon>photo_camera</md-icon>\n    </button>\n  </div>\n  <br>\n    <div class=\"sudoku-grid\">\n        <div *ngFor=\"let row of gridObj, let indexy = index;trackBy:trackByIndex;\">\n            <input *ngFor=\"let cell of row, let index = index;trackBy:trackByIndex;\" \n                    class=\"case\" maxlength=\"1\" type=\"text\" \n                    [(ngModel)]=\"cell.value\" \n                    [ngClass]=\"{\n                        'empty-cell': cell.cellType==='emptyCell',\n                        'thick-border-right': (index+1)%3===0,\n                        'thick-border-left': index===0, \n                        'thick-border-top': indexy==0, \n                        'thick-border-bottom': (indexy+1)%3===0}\" \n                    (keyup)=\"onKey($event,indexy,index)\" disabled>\n        </div>\n    </div>\n</md-card>"
 
 /***/ }),
 
@@ -280,21 +280,22 @@ var SudokuCard = (function () {
     };
     SudokuCard.prototype.initialize = function () {
         //Initialize GridObject
-        console.log("Loading grid to gridObj");
         this.gridObj = this.grid.map(function (line) {
             var lineArray = [];
             for (var i = 0; i < 9; i++) {
                 lineArray[i] = {
                     value: line[i],
+                    cellType: (line[i] ? undefined : "emptyCell"),
                     allowedValues: (line[i] ? undefined : new Set([1, 2, 3, 4, 5, 6, 7, 8, 9])),
-                    numberAllowedValues: function () { return this.allowedValues.size; }
+                    numberAllowedValues: function () {
+                        return this.allowedValues ? this.allowedValues.size : 1;
+                    }
                 };
             }
             return lineArray;
         });
     };
     SudokuCard.prototype.updateAllowedValues = function () {
-        console.log("Clicked Solve");
         for (var i = 0; i < 9; i++) {
             for (var j = 0; j < 9; j++) {
                 if (this.gridObj[i][j].value) {
@@ -303,8 +304,16 @@ var SudokuCard = (function () {
             }
         }
     };
-    SudokuCard.prototype.updateAllowedValuesForCell = function (i, j) {
+    SudokuCard.prototype.updateCellValue = function (i, j) {
         var _this = this;
+        // There is one value in the allowedValues set
+        this.gridObj[i][j].value = Array.from(this.gridObj[i][j].allowedValues)[0];
+        // Display effect ;)
+        setTimeout(function () {
+            _this.updateAllowedValuesForCell(i, j);
+        }, 100);
+    };
+    SudokuCard.prototype.updateAllowedValuesForCell = function (i, j) {
         var needUpdates = [];
         //clean the line
         for (var m = 0; m < 9; m++) {
@@ -312,7 +321,7 @@ var SudokuCard = (function () {
                 if (this.gridObj[i][m].allowedValues.has(this.gridObj[i][j].value)) {
                     this.gridObj[i][m].allowedValues.delete(this.gridObj[i][j].value);
                     if (this.gridObj[i][m].numberAllowedValues() == 1) {
-                        needUpdates.push([i, m]);
+                        this.updateCellValue(i, m);
                     }
                 }
             }
@@ -323,7 +332,7 @@ var SudokuCard = (function () {
                 if (this.gridObj[m][j].allowedValues.has(this.gridObj[i][j].value)) {
                     this.gridObj[m][j].allowedValues.delete(this.gridObj[i][j].value);
                     if (this.gridObj[m][j].numberAllowedValues() == 1) {
-                        needUpdates.push([m, j]);
+                        this.updateCellValue(m, j);
                     }
                 }
             }
@@ -339,25 +348,11 @@ var SudokuCard = (function () {
                     if (this.gridObj[indexy1][indexy2].allowedValues.has(this.gridObj[i][j].value)) {
                         this.gridObj[indexy1][indexy2].allowedValues.delete(this.gridObj[i][j].value);
                         if (this.gridObj[indexy1][indexy2].numberAllowedValues() == 1) {
-                            needUpdates.push([indexy1, indexy2]);
+                            this.updateCellValue(indexy1, indexy2);
                         }
                     }
                 }
             }
-        }
-        // needUpdates=undefined;
-        if (needUpdates.length > 0) {
-            needUpdates.map(function (couple) {
-                var l = couple[0];
-                var m = couple[1];
-                // There is one value in the allowedValues set
-                _this.gridObj[l][m].value = Array.from(_this.gridObj[l][m].allowedValues)[0];
-                // Display effect ;)
-                setTimeout(function () {
-                    _this.grid[l][m] = _this.gridObj[l][m].value;
-                    _this.updateAllowedValuesForCell(l, m);
-                }, 100);
-            });
         }
     };
     return SudokuCard;
