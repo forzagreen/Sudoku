@@ -50,15 +50,17 @@ export class SudokuCard implements OnInit {
 
     initialize() {
         //Initialize GridObject
-        console.log("Loading grid to gridObj");
         this.gridObj = this.grid.map(
             line => {
                 let lineArray = [];
                 for (let i = 0; i < 9; i++) {
                     lineArray[i] = {
                         value: line[i],
+                        cellType: (line[i] ? undefined : "emptyCell"),
                         allowedValues: (line[i] ? undefined : new Set([1,2,3,4,5,6,7,8,9])),
-                        numberAllowedValues: function() {return this.allowedValues.size;}
+                        numberAllowedValues: function() {
+                            return this.allowedValues ? this.allowedValues.size : 1;
+                        }
                     }
                 }
                 return lineArray;
@@ -66,8 +68,6 @@ export class SudokuCard implements OnInit {
     }
 
     updateAllowedValues() {
-        console.log("Clicked Solve");
-
         for (let i = 0; i < 9; i++) {
             for (let j = 0; j < 9; j++) {
                 if (this.gridObj[i][j].value) {
@@ -75,6 +75,16 @@ export class SudokuCard implements OnInit {
                 }
             }
         }
+    }
+
+    updateCellValue(i, j) {
+        // There is one value in the allowedValues set
+        this.gridObj[i][j].value = Array.from(this.gridObj[i][j].allowedValues)[0];
+
+        // Display effect ;)
+        setTimeout(() => {
+            this.updateAllowedValuesForCell(i, j);
+        }, 100);
     }
 
     updateAllowedValuesForCell(i, j) {
@@ -86,7 +96,7 @@ export class SudokuCard implements OnInit {
                 if (this.gridObj[i][m].allowedValues.has(this.gridObj[i][j].value)) {
                     this.gridObj[i][m].allowedValues.delete(this.gridObj[i][j].value);
                     if (this.gridObj[i][m].numberAllowedValues() == 1) {
-                        needUpdates.push([i, m]);
+                        this.updateCellValue(i, m);
                     }
                 }
 
@@ -99,7 +109,7 @@ export class SudokuCard implements OnInit {
                 if (this.gridObj[m][j].allowedValues.has(this.gridObj[i][j].value)) {
                     this.gridObj[m][j].allowedValues.delete(this.gridObj[i][j].value);
                     if (this.gridObj[m][j].numberAllowedValues() == 1) {
-                        needUpdates.push([m, j]);
+                        this.updateCellValue(m, j);
                     }
                 }
             }
@@ -117,28 +127,11 @@ export class SudokuCard implements OnInit {
                     if (this.gridObj[indexy1][indexy2].allowedValues.has(this.gridObj[i][j].value)) {
                         this.gridObj[indexy1][indexy2].allowedValues.delete(this.gridObj[i][j].value);
                         if (this.gridObj[indexy1][indexy2].numberAllowedValues() == 1) {
-                            needUpdates.push([indexy1, indexy2]);
+                            this.updateCellValue(indexy1, indexy2);
                         }
                     }
                 }
             }
-        }
-
-        // needUpdates=undefined;
-        if(needUpdates.length>0){
-            needUpdates.map(couple => {
-                let l = couple[0];
-                let m = couple[1];
-
-                // There is one value in the allowedValues set
-                this.gridObj[l][m].value = Array.from(this.gridObj[l][m].allowedValues)[0];
-
-                // Display effect ;)
-                setTimeout(() => {
-                    this.grid[l][m]=this.gridObj[l][m].value;
-                    this.updateAllowedValuesForCell(l, m);
-                }, 100);
-            });
         }
 
     }
