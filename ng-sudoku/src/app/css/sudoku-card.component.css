@@ -51,3 +51,8 @@
 .thick-border-bottom{
     border-bottom: 4px solid black;
 }
+
+input.empty-cell {
+    color: green;
+    background: white;
+}
