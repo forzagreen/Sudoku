@@ -1,5 +1,7 @@
 # Sudoku
-Resolving a Sudoku grid in HTML & JavaScript
+Resolving a Sudoku grid in HTML & JavaScript.
+
+The Web application is published here: https://forzagreen.github.io/Sudoku
 
 ## Deployment:
 ```
