@@ -1,6 +1,10 @@
 <h2 md-dialog-title>Camera Dialog</h2>
-<md-dialog-content>We're working on it</md-dialog-content>
+<md-dialog-content>
+  <video #inputVideo></video>
+  <img #snap>
+  <canvas style="display:none" #canvas></canvas>
+</md-dialog-content>
 <md-dialog-actions>
-  <button md-button md-dialog-close>Close</button>
-  <button md-button md-dialog-close>Yeah Dude!</button>
+  <button md-button md-dialog-close (click)="stopVideo()">Close</button>
+  <button *ngIf="!photoTaken" md-button (click)="snapPic()">Take a pic</button>
 </md-dialog-actions>
