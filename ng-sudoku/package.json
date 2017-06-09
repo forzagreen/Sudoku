@@ -5,7 +5,6 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0",
-    // "start": "ng serve --host 10.0.0.30 --ssl 1 --ssl-key \"certs/a-boujane.myapps.io.key\" --ssl-cert \"certs/a-boujane.myapps.io.crt\"",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
